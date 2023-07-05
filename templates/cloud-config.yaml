@@ -1,0 +1,40 @@
+#cloud-config
+users:
+  - default
+  - name: ubuntu
+    gecos: Ubuntu
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    passwd: $6$rounds=656000$pbs.dmbRYitGiR.k$gADyCH1S9/o2sDFpI1Ow25xKr7AVEEHb/gycQqD06NBZLj0c0/I9BgIPliBnZJmkee3N.CkycZBNCLmOYiT8r1
+    groups: users, admin
+    shell: /bin/bash
+    lock_passwd: true
+package_update: true
+package_upgrade: true
+packages:
+  - nala
+  - fail2ban
+write_files:
+  - content: |
+      alias update='sudo nala upgrade -y && sudo nala autoremove --purge && sudo nala autopurge && sudo nala clean'
+    path: /etc/skel/.bashrc
+    append: true
+runcmd:
+  - ufw disable
+  - $(install_k3s_cmd)
+  - nala upgrade -y
+  - nala autoremove --purge
+  - nala autopurge
+  - nala clean
+  - nala install -y grub-efi-arm64 grub-efi-arm64-bin grub-efi-arm64-signed kbd python3-software-properties software-properties-common ubuntu-advantage-tools update-notifier-common
+  - printf "[sshd]\nenabled = true\nbanaction = iptables-multiport" > /etc/fail2ban/jail.local
+  - systemctl enable fail2ban
+  - sed -i -e '/^PermitRootLogin/s/^.*$/PermitRootLogin no/' /etc/ssh/sshd_config
+  - sed -i -e '/^X11Forwarding/s/^.*$/X11Forwarding no/' /etc/ssh/sshd_config
+  - sed -i -e '/^#MaxAuthTries/s/^.*$/MaxAuthTries 2/' /etc/ssh/sshd_config
+  - sed -i -e '/^#AllowTcpForwarding/s/^.*$/AllowTcpForwarding no/' /etc/ssh/sshd_config
+  - sed -i -e '/^#AllowAgentForwarding/s/^.*$/AllowAgentForwarding no/' /etc/ssh/sshd_config
+  - sed -i -e '/^#AuthorizedKeysFile/s/^.*$/AuthorizedKeysFile .ssh\/authorized_keys/' /etc/ssh/sshd_config
+  - sed -i '$a AllowUsers ubuntu' /etc/ssh/sshd_config
+power_state:
+  mode: reboot
+  message: Restarting after installing k3s
