@@ -1,5 +1,16 @@
 provider "oci" {
   region = var.region
+  auth = "SecurityToken"  
+  config_file_profile = "PROFILE"
+}
+
+data "oci_identity_availability_domains" "ad" {
+  compartment_id = "${var.compartment_id}"
+}
+
+data "template_file" "ad_names" {
+  count = "${length(data.oci_identity_availability_domains.ad.availability_domains)}"
+  template = "${lookup(data.oci_identity_availability_domains.ad.availability_domains[count.index], "name")}"
 }
 
 resource "oci_core_vcn" "vcn" {
@@ -46,6 +57,7 @@ resource "oci_core_subnet" "private_subnet" {
   vcn_id            = oci_core_vcn.vcn.id
   cidr_block        = var.cidr_block_private
   security_list_ids = [ oci_core_security_list.private_subnet_sl.id ]
+  availability_domain = "${data.template_file.ad_names.*.rendered}"
 }
 
 resource "oci_core_security_list" "private_subnet_sl" {
