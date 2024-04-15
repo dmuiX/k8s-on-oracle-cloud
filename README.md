@@ -19,7 +19,7 @@ oci = oracle cloud infrastructure
 
 ### creation of the infrastructure via terraform/opentofu
 
-![cloud-infra]()
+![cloud-infra](https://github.com/dmuiX/k8s-on-oracle-cloud/blob/main/cloud-infra.png)
 
 linux distri with a very current kernel necessary, maybe edora
 
