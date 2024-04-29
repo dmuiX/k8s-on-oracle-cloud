@@ -1,0 +1,5 @@
+region = "eu-west-1"
+bucket = "virtual-lab-tofu-state"
+dynamodb_table = "virtual-lab-tofu-state-dynamo-table"
+key = "opentofu.tfstate"
+encrypt = true
