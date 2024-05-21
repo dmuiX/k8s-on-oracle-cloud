@@ -1,4 +1,6 @@
-# k8s-on-oracle-clou
+# k8s-on-oracle-cloud
+
+project on hold for now due to "out of capacity" issues with the huge arm instances. 
 
 This repo contains a complete deployment of a working k8s cluster on the oracle cloud just using free tier components. Everything is done via IAC so no manual deployment necessary.
 
@@ -22,8 +24,8 @@ oci = oracle cloud infrastructure
 ![cloud-infra](https://github.com/dmuiX/k8s-on-oracle-cloud/blob/main/cloud-infra.png)
 
 Networking is changed now to public subnet and all instances as public instances only.
-
-linux distri with a very current kernel necessary, maybe fedora
+I did not create a new diagram so the image above is not the actual implemented infrastructure. 
+linux distri with a very current kernel necessary, maybe fedora. 
 
 ### Install terraform oci on mac
 
